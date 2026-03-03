@@ -10,7 +10,7 @@ const withdrawService = async ({pin,userId}, amount) => {
         if (!check) throw new AppError('Wrong PIN', 400)
         let balance
         await prisma.$transaction(async (tx) => {
-            const userAccount = await prisma.bank_accounts.findUnique({ where: { user_id: userId } })
+            const userAccount = await tx.bank_accounts.findUnique({ where: { user_id: userId } })
             if (!userAccount) throw new AppError('Account Not Found', 404)
             if (userAccount.balance < amount) throw new AppError('Not Enough Balance', 400)
             await tx.transactions.create({
@@ -30,6 +30,7 @@ const withdrawService = async ({pin,userId}, amount) => {
             balance = result.balance
         })
         await redis.del(`balance:${userId}`)
+        await redis.del(`history-transaction:${userId}`)
         return balance
     }
     catch (err) {

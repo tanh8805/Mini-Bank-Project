@@ -1,4 +1,5 @@
 const depositService = require("../services/depositService")
+const { getHistory } = require("../services/getTransactionHistoryService")
 const transferService = require("../services/transferService")
 const withdrawService = require("../services/withdrawService")
 
@@ -47,4 +48,18 @@ const transferController = async (req, res, next) => {
     }
 }
 
-module.exports = {withdrawController, depositController, transferController}
+const getHistoryController = async (req, res, next) => {
+    try {
+        const userId = req.user.id
+        const history = await getHistory(userId)
+        return res.status(200).json({
+            message: 'Get History Transaction Success',
+            history
+        })
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
+module.exports = {withdrawController, depositController, transferController, getHistoryController}

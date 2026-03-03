@@ -5,7 +5,7 @@ const { checkPIN } = require("./pinService")
 
 const transferService = async (userId, toAccountNumber, amount, pin) => {
     try {
-        let fromAccountBalance, toAccountBalance
+        let fromAccountBalance, toAccountBalance, toUserId
         if (amount <= 0) throw new AppError('Invalid amount', 400)
         const check = await checkPIN(pin, userId)
         if (!check) throw new AppError('Wrong PIN', 400)
@@ -31,11 +31,22 @@ const transferService = async (userId, toAccountNumber, amount, pin) => {
                     balance:{increment: amount}
                 }
             })
+            await tx.transactions.create({
+                data: {
+                    from_account_id: fromAccount.id,
+                    to_account_id: toAccount.id,
+                    amount: amount,
+                    type: 'TRANSFER',
+                    status: 'SUCCESS'
+                }
+            })
             fromAccountBalance = result1.balance
             toAccountBalance = result2.balance
+            toUserId = toAccount.user_id
         })
-        await redis.del(`balance:${userId}`)
         await redis.set(`balance:${userId}`, fromAccountBalance.toString(), {EX:60})
+        await redis.del(`history-transaction:${toUserId}`)
+        await redis.del(`history-transaction:${userId}`)
         return fromAccountBalance
     }
     catch (err) {

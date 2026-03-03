@@ -4,14 +4,39 @@ const redis = require('../config/redis')
 
 const depositService = async ({userId, amount}) => {
     try {
-        const userAccount = await prisma.bank_accounts.update({
-            where: { user_id: userId },
-            data: {
-                balance: {increment: amount}
-            }
+        if (amount <= 0) throw new AppError('Invalid Amount', 400)
+
+        let balance
+
+        await prisma.$transaction(async (tx) => {
+
+            const account = await tx.bank_accounts.findUnique({
+                where: { user_id: userId }
+            })
+
+            if (!account) throw new AppError('Account Not Found', 404)
+                
+            const result = await tx.bank_accounts.update({
+                where: { id: account.id },
+                data: {
+                    balance: { increment: amount }
+                }
+            })
+
+            await tx.transactions.create({
+                data: {
+                    to_account_id: account.id,
+                    amount: amount,
+                    type: 'DEPOSIT',
+                    status: 'SUCCESS'
+                }
+            })
+
+            balance = result.balance
         })
         await redis.del(`balance:${userId}`)
-        return userAccount.balance
+        await redis.del(`history-transaction:${userId}`)
+        return balance
     }
     catch(err) {
         if(err instanceof AppError) throw err
