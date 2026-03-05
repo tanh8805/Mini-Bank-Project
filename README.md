@@ -2,8 +2,16 @@
 
 Một ứng dụng ngân hàng mini được xây dựng bằng **Node.js + Express + PostgreSQL + Prisma**, hỗ trợ các chức năng cơ bản như đăng ký, đăng nhập, xem số dư và thực hiện giao dịch.
 
-### 🌐 Live Demo
+### 🌐 Live Demo & Deployment
 **👉 Trải nghiệm trực tiếp ứng dụng tại đây: [Mini Bank Live Demo]([LINK_LIVE_DEMO_CỦA_BẠN_VÀO_ĐÂY])**
+
+**📝 Hướng dẫn trải nghiệm:**
+- Bạn có thể sử dụng **Tài khoản Demo** có sẵn:
+  - **Email:** `ta08082005@gmail.com`
+  - **Mật khẩu:** `Bt@nh123456`
+- Hoặc bạn hoàn toàn có thể **tự tạo tài khoản mới** (hệ thống hỗ trợ đăng ký và gửi email xác thực thực tế).
+
+**☁️ Deployment:** Toàn bộ hệ thống Backend và Database của dự án hiện đang được deploy và vận hành trên một máy chủ **VPS (Virtual Private Server)**.
 
 ---
 
@@ -47,25 +55,16 @@ Một ứng dụng ngân hàng mini được xây dựng bằng **Node.js + Expr
 ## 📡 API Endpoints
 
 ### Auth
-`POST /user/create`       - Đăng ký tài khoản mới
-`POST /user/login`        - Đăng nhập, trả về JWT token
+`POST /user/create`       - Đăng ký tài khoản mới
+`POST /user/login`        - Đăng nhập, trả về JWT token
 
 ### User Info *(yêu cầu JWT)*
-`GET /user-info/account-number`   - Lấy số tài khoản
-`GET /user-info/balance`          - Lấy số dư hiện tại
+`GET /user-info/account-number`   - Lấy số tài khoản
+`GET /user-info/balance`          - Lấy số dư hiện tại
 
 ### Transactions *(yêu cầu JWT)*
-`POST /transaction/deposit`       - Nạp tiền
-`POST /transaction/with-draw`     - Rút tiền
-`POST /transaction/transfer`      - Chuyển tiền
+`POST /transaction/deposit`       - Nạp tiền
+`POST /transaction/with-draw`     - Rút tiền
+`POST /transaction/transfer`      - Chuyển tiền
 
 ---
-
-## 📦 Cài đặt & Chạy
-
-### 🐳 Chạy với Docker (Recommended)
-
-#### 1. Clone project
-```bash
-git clone [https://github.com/your-username/mini-bank-project.git](https://github.com/your-username/mini-bank-project.git)
-cd mini-bank-project
